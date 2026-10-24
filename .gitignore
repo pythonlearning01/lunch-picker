@@ -1,0 +1,3 @@
+# Local restaurant backups and browser exports contain personal list data.
+午餐餐廳備份-*.json
+*.local.json

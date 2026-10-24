@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="zh-Hant">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f6f4ee" />
+    <meta name="description" content="把常去的餐廳存在手機裡，設定條件，快速抽出下一餐。" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icon.svg" type="image/svg+xml" />
+    <title>中午吃什麼？</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="中午吃什麼首頁">
+          <span class="brand-mark" aria-hidden="true">午</span>
+          <span>今天吃什麼</span>
+        </a>
+        <button class="icon-button" id="backupButton" aria-label="匯出或匯入資料" title="備份資料">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v11m0 0 4-4m-4 4-4-4M5 15v4h14v-4" /></svg>
+        </button>
+      </header>
+
+      <main>
+        <section class="view active" id="drawView" aria-labelledby="pageTitle">
+          <div class="intro">
+            <p class="eyebrow">LUNCH, DECIDED</p>
+            <h1 id="pageTitle">今天中午，<br /><span>吃點什麼好？</span></h1>
+            <p class="intro-copy">選好條件，讓好吃的選項自己出現。</p>
+          </div>
+
+          <div class="filter-panel">
+            <div class="panel-heading">
+              <div><span class="step-number">01</span><h2>今天想吃</h2></div>
+              <button class="text-button" id="clearFilters">清除條件</button>
+            </div>
+            <div class="field-block">
+              <label class="field-label">餐點類型 <span>可複選</span></label>
+              <div class="chip-list" id="filterTypes"></div>
+            </div>
+            <div class="field-block budget-block">
+              <label class="field-label" for="budgetInput">每人預算 <span>最高</span></label>
+              <div class="money-input"><span>NT$</span><input id="budgetInput" type="number" inputmode="numeric" min="0" placeholder="不限" /><span class="money-suffix">／人</span></div>
+            </div>
+            <div class="field-block">
+              <p class="field-label">想要的配備 <span>沒選就是不限</span></p>
+              <div class="amenity-grid" id="filterAmenities"></div>
+            </div>
+            <button class="draw-button" id="drawButton"><span class="draw-icon" aria-hidden="true">✳</span>幫我抽三家 <span class="button-arrow" aria-hidden="true">↗</span></button>
+          </div>
+
+          <section class="results-section" id="resultsSection" aria-live="polite" hidden>
+            <div class="results-heading"><div><p class="eyebrow">YOUR SHORTLIST</p><h2>今天的候選名單</h2></div><button class="reroll-button" id="rerollButton" aria-label="再抽一次">↻ <span>再抽一次</span></button></div>
+            <p class="result-count" id="resultCount"></p>
+            <div class="result-list" id="resultList"></div>
+          </section>
+        </section>
+
+        <section class="view" id="restaurantsView" aria-labelledby="restaurantsTitle">
+          <div class="list-header">
+            <div><p class="eyebrow">YOUR PLACES</p><h1 id="restaurantsTitle">口袋餐廳<span class="count-badge" id="restaurantCount">0</span></h1><p class="intro-copy">把喜歡的店收進來，下次不用再想。</p></div>
+            <button class="add-button" id="addRestaurantButton"><span>＋</span> 新增餐廳</button>
+          </div>
+          <div class="restaurant-list" id="restaurantList"></div>
+          <div class="empty-state" id="emptyState" hidden>
+            <div class="empty-illustration" aria-hidden="true"><span>🍜</span><i>✳</i></div>
+            <h2>口袋名單還是空的</h2><p>先把常吃的餐廳加進來，<br />下次就交給抽籤決定。</p>
+            <button class="primary-button" id="emptyAddButton">新增第一家餐廳 <span>↗</span></button>
+          </div>
+        </section>
+      </main>
+
+      <nav class="bottom-nav" aria-label="主要導覽">
+        <button class="nav-item active" data-view="drawView" aria-current="page"><span class="nav-icon">✳</span><span>抽一間</span></button>
+        <button class="nav-item" data-view="restaurantsView"><span class="nav-icon">▤</span><span>我的餐廳</span><span class="nav-count" id="navCount">0</span></button>
+      </nav>
+    </div>
+
+    <dialog id="restaurantDialog" class="dialog-card">
+      <form id="restaurantForm" method="dialog">
+        <div class="dialog-top"><div><p class="eyebrow" id="formEyebrow">ADD A PLACE</p><h2 id="formTitle">新增餐廳</h2></div><button class="icon-button close-button" type="button" data-close aria-label="關閉">×</button></div>
+        <input type="hidden" id="restaurantId" />
+        <label class="form-label" for="nameInput">餐廳名稱 <span class="required">必填</span></label>
+        <input class="text-input" id="nameInput" required maxlength="60" placeholder="例如：巷口的咖哩飯" />
+        <div class="form-row-title"><span class="form-label">餐點類型</span><span class="helper-text">可複選</span></div>
+        <div class="chip-list form-chips" id="formTypes"></div>
+        <div class="custom-type-row"><input class="text-input" id="customTypeInput" maxlength="20" placeholder="新增自訂類型" /><button type="button" class="small-outline" id="addTypeButton">新增類型</button></div>
+        <label class="form-label" for="priceInput">每人價格 <span class="helper-text">選填</span></label>
+        <div class="money-input form-money"><span>NT$</span><input id="priceInput" type="number" inputmode="numeric" min="0" placeholder="尚未確認" /><span class="money-suffix">／人</span></div>
+        <div class="form-label amenity-label">餐廳提供</div>
+        <div class="form-amenities" id="formAmenities"></div>
+        <div class="dialog-actions"><button class="cancel-button" type="button" data-close>取消</button><button class="save-button" type="submit">儲存餐廳 <span>↗</span></button></div>
+      </form>
+    </dialog>
+
+    <dialog id="backupDialog" class="dialog-card compact-dialog">
+      <div class="dialog-top"><div><p class="eyebrow">YOUR DATA</p><h2>餐廳資料備份</h2></div><button class="icon-button close-button" type="button" data-close aria-label="關閉">×</button></div>
+      <p class="dialog-copy">資料保存在這台裝置的瀏覽器。匯出檔案可用來備份或搬到另一台裝置。</p>
+      <button class="backup-action" id="exportButton"><span class="backup-action-icon">↓</span><span><b>匯出資料</b><small>下載一份餐廳備份檔</small></span><span class="button-arrow">↗</span></button>
+      <button class="backup-action" id="importButton"><span class="backup-action-icon">↑</span><span><b>匯入資料</b><small>從備份檔還原餐廳與類型</small></span><span class="button-arrow">↗</span></button>
+      <input type="file" id="importFile" accept=".json,application/json" hidden />
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+  <script src="app.js"></script>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "今天吃什麼？",
+  "short_name": "今天吃什麼",
+  "description": "把口袋餐廳存在手機裡，快速抽出下一餐。",
+  "lang": "zh-Hant",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f6f4ee",
+  "theme_color": "#f6f4ee",
+  "icons": [
+    { "src": "icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}
