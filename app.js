@@ -24,7 +24,7 @@
       const parsed = JSON.parse(raw);
       const types = Array.isArray(parsed.types) ? parsed.types.filter((item) => typeof item === "string" && item.trim()) : [...DEFAULT_TYPES];
       const restaurants = Array.isArray(parsed.restaurants) ? parsed.restaurants.filter(isRestaurant).map(normalizeRestaurant) : [];
-      return { types: [...new Set([...DEFAULT_TYPES, ...types])], restaurants };
+      return { types: [...new Set(types)], restaurants };
     } catch {
       return { types: [...DEFAULT_TYPES], restaurants: [] };
     }
@@ -315,7 +315,7 @@
       const parsed = JSON.parse(await file.text());
       if (!Array.isArray(parsed.types) || !Array.isArray(parsed.restaurants) || !parsed.restaurants.every(isRestaurant)) throw new Error("invalid");
       if (!window.confirm(`匯入 ${parsed.restaurants.length} 家餐廳與類型？目前裝置上的資料會由備份內容取代。`)) return;
-      state.types = [...new Set([...DEFAULT_TYPES, ...parsed.types.filter((type) => typeof type === "string" && type.trim())])];
+      state.types = [...new Set(parsed.types.filter((type) => typeof type === "string" && type.trim()))];
       state.restaurants = parsed.restaurants.map(normalizeRestaurant);
       persist();
       renderTypes();
